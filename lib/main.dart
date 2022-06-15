@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
-QuizBrain quizBrain =  QuizBrain();
+QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -29,14 +30,28 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> scoreKeeper = [];
 
-  List<Icon> scoreKeeper = [
-    // Icon(Icons.check, color: Colors.green),
-    // Icon(Icons.close, color: Colors.red)
-  ];
+  void checkAnswer(bool userAnswer) {
+    bool correctAnswer = quizBrain.getQuestionAnswer();
 
+    if(quizBrain.isFinished){
+      Alert(context: context, title: "Fim.", desc: "Você completou o quiz").show();
+      quizBrain.reset();
+      scoreKeeper = [];
+      setState(() {});
+      return;
+    }
 
-
+    if (userAnswer == correctAnswer) {
+      scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+    } else {
+      scoreKeeper.add(Icon(Icons.close, color: Colors.red));
+    }
+    setState(() {
+      quizBrain.goToNextQuestion();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,19 +89,7 @@ class _QuizPageState extends State<QuizPage> {
                   fontSize: 20.0,
                 ),
               ),
-              onPressed: () {
-                bool correctAnswer = quizBrain.getQuestionAnswer();
-
-                if(correctAnswer){
-                  print('user got it right');
-                }else {
-                  print('user got it wrong');
-                }
-                setState(() {
-                  quizBrain.goToNextQuestion();
-                  // scoreKeeper.add(Icon(Icons.check, color: Colors.green));
-                });
-              },
+              onPressed: () => checkAnswer(true),
             ),
           ),
         ),
@@ -104,19 +107,7 @@ class _QuizPageState extends State<QuizPage> {
                   color: Colors.white,
                 ),
               ),
-              onPressed: () {
-                bool correctAnswer = quizBrain.getQuestionAnswer();
-
-                if(!correctAnswer){
-                  print('user got it right');
-                }else {
-                  print('user got it wrong');
-                }
-                setState(() {
-                  quizBrain.goToNextQuestion();
-                  // scoreKeeper.add(Icon(Icons.close, color: Colors.green));
-                });
-              },
+              onPressed: () => checkAnswer(false),
             ),
           ),
         ),
@@ -127,7 +118,7 @@ class _QuizPageState extends State<QuizPage> {
 }
 
 /*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
+TODO: question1: 'You can lead a cow down stairs but not up stairs.', false,
 question2: 'Approximately one quarter of human bones are in the feet.', true,
 question3: 'A slug\'s blood is green.', true,
 */

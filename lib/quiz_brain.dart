@@ -32,10 +32,18 @@ class QuizBrain {
         true),
   ];
 
+  int get getQuestionNumber => _questionNumber;
+
+  int get questionBankLength => _questionBank.length - 1;
+
+  bool get isFinished => _questionNumber == _questionBank.length - 1;
+
   void goToNextQuestion(){
-    if(_questionNumber < _questionBank.length - 1){
-      _questionNumber++;
-    }
+    if(_questionNumber < _questionBank.length - 1) _questionNumber++;
+  }
+
+  void reset(){
+    if(isFinished) _questionNumber = 0;
   }
 
   String getQuestionText(){
